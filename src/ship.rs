@@ -39,6 +39,7 @@ impl Ship {
     pub fn shoot(&mut self, shot_frame: usize) {
         if self.last_shot_frame + self.shot_interval < shot_frame {
             self.shots.push(self.pos);
+            self.shots.push(self.pos + Vec2::x(1));
             self.last_shot_frame = shot_frame;
         }
     }
@@ -52,7 +53,8 @@ impl Ship {
 
     pub fn draw(&self, pencil: &mut Pencil) {
         pencil.set_foreground(Color::Cyan);
-        pencil.draw_char('A', self.pos);
+        pencil.draw_char('/', self.pos);
+        pencil.draw_char('\\', self.pos + Vec2::x(1));
         pencil.set_foreground(Color::Cyan);
         pencil.set_style(Style::Bold);
         for shot in &self.shots {
