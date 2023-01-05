@@ -48,15 +48,13 @@ fn is_game_over(game_state: &GameState) -> bool {
 }
 
 fn render_game_over_screen(game_state: &GameState, win_size: Vec2, pencil: &mut Pencil) {
-    let status_msg = if game_state.health > 0 { "You win! :D" } else { "You lose :(" };
-    let msg = &format!("{}  -  score: {}", status_msg, game_state.score);
+    let msg = &format!("Game Over  -  score: {}", game_state.score);
     pencil.set_origin(win_size / 2 - Vec2::x(msg.len() / 2));
     pencil.draw_text(msg, Vec2::zero());
 }
 
 fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
     pencil.set_origin((win_size - game_state.dimension) / 2);
-    pencil.draw_text(&format!("Health: {}  -  score: {}", game_state.health, game_state.score), Vec2::xy(20, -1));
 
     game_state.ship.draw(&mut pencil);
     for shot in &game_state.enemy_shots {
@@ -66,6 +64,17 @@ fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
         enemy.draw(&mut pencil);
     }
 
+    draw_hud(&game_state, &mut pencil);
+    draw_border(game_state, &mut pencil);
+}
+
+fn draw_hud(game_state: &GameState, pencil: &mut Pencil) {
+    pencil.set_foreground(Color::White);
+    let status_msg = &format!("Health: {}  -  score: {}", game_state.health, game_state.score);
+    pencil.draw_text(status_msg, Vec2::xy(20, -1));
+}
+
+fn draw_border(game_state: &GameState, pencil: &mut Pencil) {
     pencil.set_foreground(Color::Grey);
     let border_rect = game_state.dimension.add(Vec2::xy(BORDER_SIZE, BORDER_SIZE));
     pencil.draw_rect(&RectCharset::simple_round_lines(), Vec2::zero(), border_rect);
