@@ -48,11 +48,11 @@ impl Enemy {
     }
 
     pub fn draw(&self, pencil: &mut Pencil) {
-        pencil.set_foreground(Color::Green);
-        pencil.draw_char('M', self.pos);
         pencil.set_foreground(Color::Red);
         for shot in &self.shots {
             pencil.draw_char('|', *shot);
         }
+        pencil.set_foreground(Color::Green);
+        pencil.draw_char('M', self.pos);
     }
 }
