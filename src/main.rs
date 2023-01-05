@@ -3,6 +3,7 @@ mod input;
 mod constant;
 mod enemy;
 mod ship;
+mod shot;
 
 use std::ops::Add;
 use ruscii::app::{App, Config, State};
@@ -58,7 +59,9 @@ fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
     pencil.draw_text(&format!("lives: {}  -  score: {}", game_state.lives, game_state.score), Vec2::xy(20, -1));
 
     game_state.ship.draw(&mut pencil);
-
+    for shot in &game_state.enemy_shots {
+        shot.draw(&mut pencil);
+    }
     for enemy in &game_state.enemies {
         enemy.draw(&mut pencil);
     }

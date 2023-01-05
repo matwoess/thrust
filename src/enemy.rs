@@ -1,8 +1,11 @@
+use rand::{Rng, thread_rng};
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
 use ruscii::terminal::Color;
+use crate::shot::Shot;
 
 const SHOT_SPEED: i32 = 2;
+const SHOT_PROBABILITY: f64 = 0.2;
 
 pub struct Enemy {
     pub pos: Vec2,
@@ -27,9 +30,11 @@ impl Enemy {
         }
     }
 
-    pub fn shoot(&mut self, shot_frame: usize) {
+    pub fn shoot(&mut self, shot_frame: usize, shots: &mut Vec<Shot>) {
         if self.last_shot_frame + self.shot_interval < shot_frame {
-            self.shots.push(self.pos);
+            if thread_rng().gen_bool(SHOT_PROBABILITY) {
+                shots.push(Shot::new(self.pos));
+            }
             self.last_shot_frame = shot_frame;
         }
     }
@@ -42,16 +47,12 @@ impl Enemy {
         }
     }
 
-    pub fn update(&mut self, frame: usize) {
-        self.shoot(frame);
+    pub fn update(&mut self, frame: usize, shots: &mut Vec<Shot>) {
+        self.shoot(frame, shots);
         self.move_self(frame);
     }
 
     pub fn draw(&self, pencil: &mut Pencil) {
-        pencil.set_foreground(Color::Red);
-        for shot in &self.shots {
-            pencil.draw_char('|', *shot);
-        }
         pencil.set_foreground(Color::Green);
         pencil.draw_char('M', self.pos);
     }
