@@ -51,6 +51,15 @@ impl Ship {
         self.shots.iter_mut().for_each(|shot| shot.y -= 1);
     }
 
+    pub fn is_hit_by(&self, object: &Vec2) -> bool {
+        if object.y == self.pos.y {
+            if object.x == self.pos.x || object.x == self.pos.x + 1 {
+                return true;
+            }
+        }
+        false
+    }
+
     pub fn draw(&self, pencil: &mut Pencil) {
         pencil.set_foreground(Color::Cyan);
         pencil.draw_char('/', self.pos);

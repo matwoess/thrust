@@ -44,11 +44,11 @@ fn draw_fps(fps_counter: &mut FPSCounter, pencil: &mut Pencil) {
 }
 
 fn is_game_over(game_state: &GameState) -> bool {
-    game_state.lives == 0
+    game_state.health <= 0
 }
 
 fn render_game_over_screen(game_state: &GameState, win_size: Vec2, pencil: &mut Pencil) {
-    let status_msg = if game_state.lives > 0 { "You win! :D" } else { "You lose :(" };
+    let status_msg = if game_state.health > 0 { "You win! :D" } else { "You lose :(" };
     let msg = &format!("{}  -  score: {}", status_msg, game_state.score);
     pencil.set_origin(win_size / 2 - Vec2::x(msg.len() / 2));
     pencil.draw_text(msg, Vec2::zero());
@@ -56,7 +56,7 @@ fn render_game_over_screen(game_state: &GameState, win_size: Vec2, pencil: &mut 
 
 fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
     pencil.set_origin((win_size - game_state.dimension) / 2);
-    pencil.draw_text(&format!("lives: {}  -  score: {}", game_state.lives, game_state.score), Vec2::xy(20, -1));
+    pencil.draw_text(&format!("Health: {}  -  score: {}", game_state.health, game_state.score), Vec2::xy(20, -1));
 
     game_state.ship.draw(&mut pencil);
     for shot in &game_state.enemy_shots {
