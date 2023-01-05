@@ -5,9 +5,9 @@ use ruscii::terminal::{Color, Style};
 pub struct Ship {
     pub pos: Vec2,
     pub shots: Vec<Vec2>,
-    pub last_shot_frame: usize,
     pub auto_shoot: bool,
     pub shot_interval: usize,
+    pub last_shot_frame: usize,
 }
 
 impl Ship {
@@ -64,7 +64,7 @@ impl Ship {
         pencil.set_foreground(Color::Cyan);
         pencil.draw_char('/', self.pos);
         pencil.draw_char('\\', self.pos + Vec2::x(1));
-        pencil.set_foreground(Color::Cyan);
+        pencil.set_foreground(Color::Yellow);
         pencil.set_style(Style::Bold);
         for shot in &self.shots {
             pencil.draw_char('|', *shot);

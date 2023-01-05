@@ -6,8 +6,7 @@ use crate::game_state::GameState;
 pub fn handle_user_input(mut game_state: &mut GameState, app_state: &mut State) {
     for key_event in app_state.keyboard().last_key_events() {
         match key_event {
-            KeyEvent::Pressed(Key::Esc) => app_state.stop(),
-            KeyEvent::Pressed(Key::Q) => app_state.stop(),
+            KeyEvent::Pressed(Key::Esc) | KeyEvent::Pressed(Key::Q) => app_state.stop(),
             KeyEvent::Pressed(Key::Space) => game_state.ship.auto_shoot = !game_state.ship.auto_shoot,
             _ => (),
         }
