@@ -8,7 +8,7 @@ pub fn handle_user_input(mut game_state: &mut GameState, app_state: &mut State) 
         match key_event {
             KeyEvent::Pressed(Key::Esc) => app_state.stop(),
             KeyEvent::Pressed(Key::Q) => app_state.stop(),
-            KeyEvent::Pressed(Key::Space) => game_state.auto_shoot = !game_state.auto_shoot,
+            KeyEvent::Pressed(Key::Space) => game_state.ship.auto_shoot = !game_state.ship.auto_shoot,
             _ => (),
         }
     }

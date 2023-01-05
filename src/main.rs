@@ -1,10 +1,12 @@
 mod game_state;
 mod input;
 mod constant;
+mod enemy;
+mod ship;
 
 use std::ops::Add;
 use ruscii::app::{App, Config, State};
-use ruscii::terminal::{Window, Color, Style};
+use ruscii::terminal::{Window, Color};
 use ruscii::drawing::{Pencil, RectCharset};
 use ruscii::spatial::{Vec2};
 use ruscii::gui::{FPSCounter};
@@ -55,14 +57,12 @@ fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
     pencil.set_origin((win_size - game_state.dimension) / 2);
     pencil.draw_text(&format!("lives: {}  -  score: {}", game_state.lives, game_state.score), Vec2::xy(20, -1));
 
-    pencil.set_foreground(Color::Cyan);
-    pencil.draw_char('A', game_state.spaceship_pos);
+    game_state.ship.draw(&mut pencil);
 
-    pencil.set_foreground(Color::Cyan);
-    pencil.set_style(Style::Bold);
-    for shot in &game_state.spaceship_shots {
-        pencil.draw_char('|', *shot);
+    for enemy in &game_state.enemies {
+        enemy.draw(&mut pencil);
     }
+
     pencil.set_foreground(Color::Grey);
     let border_rect = game_state.dimension.add(Vec2::xy(BORDER_SIZE, BORDER_SIZE));
     pencil.draw_rect(&RectCharset::simple_round_lines(), Vec2::zero(), border_rect);
