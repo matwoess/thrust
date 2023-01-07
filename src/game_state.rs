@@ -1,6 +1,7 @@
+use std::cmp::{max};
 use rand::{Rng, thread_rng};
 use ruscii::spatial::{Vec2};
-use crate::constant::{BORDER_SIZE, DMG_COLLISION, DMG_ENEMY_REACHED_GROUND, DMG_SHOT_HIT, FPS_LIMIT};
+use crate::constant::{BORDER_SIZE, DMG_COLLISION, DMG_ENEMY_REACHED_GROUND, DMG_SHOT_HIT, FPS_LIMIT, MIN_SPAWN_INTERVAL, SPAWN_INTERVAL_DECREASE, SPEEDUP_AFTER_X_FRAMES};
 use crate::enemy::Enemy;
 use crate::ship::Ship;
 use crate::shot::Shot;
@@ -14,6 +15,7 @@ pub struct GameState {
     pub score: usize,
     pub last_spawn: usize,
     pub spawn_interval: usize,
+    pub last_spawn_speedup: usize,
 }
 
 impl GameState {
@@ -28,6 +30,7 @@ impl GameState {
             score: 0,
             last_spawn: 0,
             spawn_interval: (2 * FPS_LIMIT) as usize,
+            last_spawn_speedup: 0,
         }
     }
 
@@ -56,7 +59,7 @@ impl GameState {
     pub fn update(&mut self, frame: usize) {
         self.ship.update(frame);
         self.enemies.iter_mut().for_each(|enemy| enemy.update(frame, &mut self.enemy_shots));
-        self.enemies.retain(|enemy|{
+        self.enemies.retain(|enemy| {
             if self.ship.is_hit_by(&enemy.pos) {
                 self.health -= DMG_COLLISION;
                 return false;
@@ -92,5 +95,9 @@ impl GameState {
             !destroyed
         });
         self.score += partial_score;
+        if self.last_spawn_speedup + SPEEDUP_AFTER_X_FRAMES < frame {
+            self.spawn_interval = max(MIN_SPAWN_INTERVAL, self.spawn_interval - SPAWN_INTERVAL_DECREASE);
+            self.last_spawn_speedup = frame;
+        }
     }
 }

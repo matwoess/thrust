@@ -9,3 +9,7 @@ pub const ENEMY_SHOT_PROBABILITY: f64 = 0.2;
 pub const DMG_ENEMY_REACHED_GROUND: isize = 15;
 pub const DMG_COLLISION: isize = 50;
 pub const DMG_SHOT_HIT: isize = 5;
+
+pub const SPEEDUP_AFTER_X_FRAMES: usize = (FPS_LIMIT * 10) as usize;
+pub const SPAWN_INTERVAL_DECREASE: usize = 10;
+pub const MIN_SPAWN_INTERVAL: usize = (FPS_LIMIT / 2) as usize;
