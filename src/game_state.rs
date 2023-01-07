@@ -42,6 +42,43 @@ impl GameState {
         self.ship.move_y(dy, self.dimension.y);
     }
 
+    pub fn update(&mut self, frame: usize) {
+        self.ship.update(frame);
+        self.update_enemies(frame);
+        self.update_enemy_shots();
+        self.spawn_enemy(frame);
+        self.update_ship_shots();
+        self.update_game_speed(frame);
+    }
+
+    fn update_enemies(&mut self, frame: usize) {
+        self.enemies.iter_mut().for_each(|enemy| enemy.update(frame, &mut self.enemy_shots));
+        self.enemies.retain(|enemy| {
+            if self.ship.is_hit_by(&enemy.pos) {
+                self.health -= DMG_COLLISION;
+                return false;
+            }
+            if enemy.pos.y > self.dimension.y - BORDER_SIZE {
+                self.health -= DMG_ENEMY_REACHED_GROUND;
+                return false;
+            }
+            true
+        });
+    }
+
+    fn update_enemy_shots(&mut self) {
+        self.enemy_shots.retain(|shot| {
+            if self.ship.is_hit_by(&shot.pos) {
+                self.health -= DMG_SHOT_HIT;
+                return false;
+            }
+            shot.pos.y < self.dimension.y - BORDER_SIZE
+        });
+        self.enemy_shots.iter_mut().for_each(|shot| {
+            shot.update();
+        });
+    }
+
     fn spawn_enemy(&mut self, frame: usize) {
         if self.last_spawn + self.spawn_interval < frame {
             self.last_spawn = frame;
@@ -56,32 +93,7 @@ impl GameState {
         }
     }
 
-    pub fn update(&mut self, frame: usize) {
-        self.ship.update(frame);
-        self.enemies.iter_mut().for_each(|enemy| enemy.update(frame, &mut self.enemy_shots));
-        self.enemies.retain(|enemy| {
-            if self.ship.is_hit_by(&enemy.pos) {
-                self.health -= DMG_COLLISION;
-                return false;
-            }
-            if enemy.pos.y > self.dimension.y - BORDER_SIZE {
-                self.health -= DMG_ENEMY_REACHED_GROUND;
-                return false;
-            }
-            true
-        });
-        self.enemy_shots.retain(|shot| {
-            if self.ship.is_hit_by(&shot.pos) {
-                self.health -= DMG_SHOT_HIT;
-                return false;
-            }
-            shot.pos.y < self.dimension.y - BORDER_SIZE
-        });
-        self.enemy_shots.iter_mut().for_each(|shot| {
-            shot.update();
-        });
-        self.spawn_enemy(frame);
-
+    fn update_ship_shots(&mut self) {
         let mut partial_score = 0;
         let enemies = &mut self.enemies;
         self.ship.shots.retain(|shot| {
@@ -95,6 +107,9 @@ impl GameState {
             !destroyed
         });
         self.score += partial_score;
+    }
+
+    fn update_game_speed(&mut self, frame: usize) {
         if self.last_spawn_speedup + SPEEDUP_AFTER_X_FRAMES < frame {
             self.spawn_interval = max(MIN_SPAWN_INTERVAL, self.spawn_interval - SPAWN_INTERVAL_DECREASE);
             self.last_spawn_speedup = frame;
