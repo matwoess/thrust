@@ -45,7 +45,7 @@ fn draw_fps(fps_counter: &mut FPSCounter, pencil: &mut Pencil) {
 }
 
 fn is_game_over(game_state: &GameState) -> bool {
-    game_state.health <= 0
+    game_state.health == 0
 }
 
 fn render_game_over_screen(game_state: &GameState, win_size: Vec2, pencil: &mut Pencil) {

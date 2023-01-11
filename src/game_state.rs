@@ -13,7 +13,7 @@ pub struct GameState {
     pub enemies: Vec<Enemy>,
     pub enemy_shots: Vec<Shot>,
     pub goodies: Vec<Goodie>,
-    pub health: isize,
+    pub health: usize,
     pub shield: usize,
     pub score: usize,
     pub last_spawn: usize,
@@ -61,11 +61,11 @@ impl GameState {
         self.enemies.iter_mut().for_each(|enemy| enemy.update(frame, &mut self.enemy_shots));
         self.enemies.retain(|enemy| {
             if self.ship.is_hit_by(&enemy.pos) {
-                self.health -= DMG_COLLISION;
+                self.health = max(self.health - DMG_COLLISION, 0);
                 return false;
             }
             if enemy.pos.y > self.dimension.y - BORDER_SIZE {
-                self.health -= DMG_ENEMY_REACHED_GROUND;
+                self.health = max( self.health - DMG_ENEMY_REACHED_GROUND, 9);
                 return false;
             }
             true
@@ -75,7 +75,7 @@ impl GameState {
     fn update_enemy_shots(&mut self) {
         self.enemy_shots.retain(|shot| {
             if self.ship.is_hit_by(&shot.pos) {
-                self.health -= DMG_SHOT_HIT;
+                self.health = max(self.health - DMG_SHOT_HIT, 0);
                 return false;
             }
             shot.pos.y < self.dimension.y - BORDER_SIZE
@@ -91,7 +91,7 @@ impl GameState {
             if self.ship.is_hit_by(&goodie.pos) {
                 match &goodie.goodie_type {
                     GoodieType::RepairKit(additional_health) => {
-                        self.health = min(self.health + *additional_health as isize, MAX_HEALTH as isize);
+                        self.health = min(self.health + *additional_health, MAX_HEALTH);
                     }
                     GoodieType::ShieldBoost(additional_shield) => {
                         self.shield = min(self.shield + additional_shield, MAX_SHIELD);
