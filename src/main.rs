@@ -65,6 +65,10 @@ fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
         enemy.draw(&mut pencil);
     }
 
+    for goodie in &game_state.goodies {
+        goodie.draw(&mut pencil);
+    }
+
     draw_hud(&game_state, &mut pencil);
     draw_border(game_state, &mut pencil);
 }

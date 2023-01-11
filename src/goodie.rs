@@ -26,8 +26,8 @@ impl Goodie {
     pub fn draw(&self, pencil: &mut Pencil) {
         pencil.set_foreground(Color::Magenta);
         let char_representation = match &self.goodie_type {
-            GoodieType::RepairKit(_) => '3',
-            GoodieType::ShieldBoost(_) => 's',
+            GoodieType::RepairKit(_) => '♥',
+            GoodieType::ShieldBoost(_) => '⛨',
             GoodieType::ShipUpgrade(ship_type) => match ship_type {
                 ShipType::Basic => '^',
                 ShipType::DiagonalShot => 'Y',

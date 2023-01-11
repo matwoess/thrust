@@ -91,7 +91,7 @@ impl GameState {
             if self.ship.is_hit_by(&goodie.pos) {
                 match &goodie.goodie_type {
                     GoodieType::RepairKit(additional_health) => {
-                        self.health = max(self.health + *additional_health as isize, MAX_HEALTH as isize);
+                        self.health = min(self.health + *additional_health as isize, MAX_HEALTH as isize);
                     }
                     GoodieType::ShieldBoost(additional_shield) => {
                         self.shield = min(self.shield + additional_shield, MAX_SHIELD);
@@ -126,11 +126,15 @@ impl GameState {
         self.ship.shots.retain(|shot| {
             if shot.y == 1 { return false; }
             let pre_len = enemies.len();
-            enemies.retain(|enemy| &enemy.pos != shot);
+            enemies.retain(|enemy| {
+                if &enemy.pos == shot {
+                    partial_score += 5;
+                    self.goodies.push(Goodie::new(enemy.pos, GoodieType::RepairKit(5)));
+                    return false;
+                }
+                true
+            });
             let destroyed = enemies.len() != pre_len;
-            if destroyed {
-                partial_score += 5;
-            }
             !destroyed
         });
         self.score += partial_score;
