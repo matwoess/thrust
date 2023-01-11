@@ -11,7 +11,7 @@ use ruscii::terminal::{Window, Color};
 use ruscii::drawing::{Pencil, RectCharset};
 use ruscii::spatial::{Vec2};
 use ruscii::gui::{FPSCounter};
-use crate::constant::{BORDER_SIZE, FPS_LIMIT, GAME_SIZE};
+use crate::constant::{BORDER_SIZE, FPS_LIMIT, GAME_SIZE, HUD_HEALTH_GRANULARITY};
 
 use crate::game_state::GameState;
 use crate::input::handle_user_input;
@@ -69,6 +69,14 @@ fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
 }
 
 fn draw_hud(game_state: &GameState, pencil: &mut Pencil) {
+    pencil.set_foreground(Color::Red);
+    let mut pos = Vec2::xy(-2, 0);
+    pencil.draw_char('♥',pos);
+    let curr_health_hud = game_state.health / HUD_HEALTH_GRANULARITY;
+    for _ in 0..curr_health_hud {
+        pos.y += 1;
+        pencil.draw_char('|',pos);
+    }
     pencil.set_foreground(Color::White);
     let status_msg = &format!("Health: {}  -  score: {}", game_state.health, game_state.score);
     pencil.draw_text(status_msg, Vec2::xy(20, -1));

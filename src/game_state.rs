@@ -1,7 +1,7 @@
 use std::cmp::{max};
 use rand::{Rng, thread_rng};
 use ruscii::spatial::{Vec2};
-use crate::constant::{BORDER_SIZE, DMG_COLLISION, DMG_ENEMY_REACHED_GROUND, DMG_SHOT_HIT, FPS_LIMIT, MIN_SPAWN_INTERVAL, SPAWN_INTERVAL_DECREASE, SPEEDUP_AFTER_X_FRAMES};
+use crate::constant::{BORDER_SIZE, DMG_COLLISION, DMG_ENEMY_REACHED_GROUND, DMG_SHOT_HIT, FPS_LIMIT, INITIAL_HEALTH, INITIAL_SPAWN_INTERVAL, MIN_SPAWN_INTERVAL, SPAWN_INTERVAL_DECREASE, SPEEDUP_AFTER_X_FRAMES};
 use crate::enemy::Enemy;
 use crate::ship::Ship;
 use crate::shot::Shot;
@@ -26,10 +26,10 @@ impl GameState {
             ship,
             enemies: Vec::new(),
             enemy_shots: Vec::new(),
-            health: 100,
+            health: INITIAL_HEALTH,
             score: 0,
             last_spawn: 0,
-            spawn_interval: (2 * FPS_LIMIT) as usize,
+            spawn_interval: INITIAL_SPAWN_INTERVAL,
             last_spawn_speedup: 0,
         }
     }
