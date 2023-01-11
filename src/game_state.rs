@@ -61,11 +61,11 @@ impl GameState {
         self.enemies.iter_mut().for_each(|enemy| enemy.update(frame, &mut self.enemy_shots));
         self.enemies.retain(|enemy| {
             if self.ship.is_hit_by(&enemy.pos) {
-                self.health = max(self.health - DMG_COLLISION, 0);
+                self.health = if self.health <= DMG_COLLISION { 0 } else { self.health - DMG_COLLISION };
                 return false;
             }
             if enemy.pos.y > self.dimension.y - BORDER_SIZE {
-                self.health = max( self.health - DMG_ENEMY_REACHED_GROUND, 9);
+                self.health = if self.health <= DMG_ENEMY_REACHED_GROUND { 0 } else { self.health - DMG_ENEMY_REACHED_GROUND };
                 return false;
             }
             true
@@ -75,7 +75,7 @@ impl GameState {
     fn update_enemy_shots(&mut self) {
         self.enemy_shots.retain(|shot| {
             if self.ship.is_hit_by(&shot.pos) {
-                self.health = max(self.health - DMG_SHOT_HIT, 0);
+                self.health = if self.health <= DMG_SHOT_HIT { 0 } else { self.health - DMG_SHOT_HIT };
                 return false;
             }
             shot.pos.y < self.dimension.y - BORDER_SIZE
