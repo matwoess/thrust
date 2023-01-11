@@ -2,7 +2,7 @@ use rand::{Rng, thread_rng};
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
 use ruscii::terminal::Color;
-use crate::constant::{ENEMY_SHOT_PROBABILITY};
+use crate::constant::{CHAR_ENEMY, ENEMY_SHOT_PROBABILITY};
 use crate::shot::Shot;
 
 pub struct Enemy {
@@ -52,6 +52,6 @@ impl Enemy {
 
     pub fn draw(&self, pencil: &mut Pencil) {
         pencil.set_foreground(Color::Green);
-        pencil.draw_char('M', self.pos);
+        pencil.draw_char(CHAR_ENEMY, self.pos);
     }
 }

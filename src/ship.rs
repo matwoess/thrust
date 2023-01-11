@@ -3,6 +3,7 @@ use rand::Rng;
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
 use ruscii::terminal::{Color, Style};
+use crate::constant::CHAR_SHOT_SHIP;
 
 pub enum ShipType {
   Basic, DiagonalShot, StrongShot
@@ -95,7 +96,7 @@ impl Ship {
         pencil.set_foreground(Color::Yellow);
         pencil.set_style(Style::Bold);
         for shot in &self.shots {
-            pencil.draw_char('|', *shot);
+            pencil.draw_char(CHAR_SHOT_SHIP, *shot);
         }
     }
 }
