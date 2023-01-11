@@ -129,7 +129,7 @@ impl GameState {
             enemies.retain(|enemy| {
                 if &enemy.pos == shot {
                     partial_score += 5;
-                    self.goodies.push(Goodie::new(enemy.pos, GoodieType::RepairKit(5)));
+                    self.goodies.push(Goodie::new(enemy.pos, rand::random()));
                     return false;
                 }
                 true

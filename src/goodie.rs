@@ -1,3 +1,5 @@
+use rand::distributions::{Distribution, Standard};
+use rand::Rng;
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
 use ruscii::terminal::Color;
@@ -8,6 +10,16 @@ pub enum GoodieType {
     RepairKit(usize),
     ShieldBoost(usize),
     ShipUpgrade(ShipType),
+}
+
+impl Distribution<GoodieType> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> GoodieType {
+        match rng.gen_range(0..=2) {
+            0 => GoodieType::RepairKit(5),
+            1 => GoodieType::ShieldBoost(5),
+            _ => GoodieType::ShipUpgrade(rand::random()),
+        }
+    }
 }
 
 pub struct Goodie {

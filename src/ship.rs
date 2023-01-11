@@ -1,3 +1,5 @@
+use rand::distributions::{Distribution, Standard};
+use rand::Rng;
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
 use ruscii::terminal::{Color, Style};
@@ -6,8 +8,19 @@ pub enum ShipType {
   Basic, DiagonalShot, StrongShot
 }
 
+impl Distribution<ShipType> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> ShipType {
+        match rng.gen_range(0..=2) {
+            0 => ShipType::Basic,
+            1 => ShipType::DiagonalShot,
+            _ => ShipType::StrongShot,
+        }
+    }
+}
+
 pub struct Ship {
     pub pos: Vec2,
+    pub ship_type: ShipType,
     pub shots: Vec<Vec2>,
     pub auto_shoot: bool,
     pub shot_interval: usize,
@@ -15,8 +28,12 @@ pub struct Ship {
 }
 
 impl Ship {
-    pub(crate) fn change_ship_type(&self, _new_ship_type: &ShipType) {
-        todo!()
+    pub(crate) fn change_ship_type(&mut self, new_ship_type: &ShipType) {
+        self.ship_type = match new_ship_type {
+            ShipType::Basic => ShipType::Basic,
+            ShipType::DiagonalShot => ShipType::DiagonalShot,
+            ShipType::StrongShot => ShipType::StrongShot,
+        };
     }
 }
 
@@ -24,6 +41,7 @@ impl Ship {
     pub fn new(initial_position: Vec2) -> Self {
         Self {
             pos: initial_position,
+            ship_type: ShipType::Basic,
             shots: Vec::new(),
             last_shot_frame: 0,
             auto_shoot: false,
