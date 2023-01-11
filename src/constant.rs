@@ -7,6 +7,9 @@ pub const BORDER_SIZE: i32 = 1;
 pub const ENEMY_SHOT_PROBABILITY: f64 = 0.2;
 
 pub const INITIAL_HEALTH: isize = 100;
+pub const INITIAL_SHIELD: usize = 0;
+pub const MAX_HEALTH: usize = 100;
+pub const MAX_SHIELD: usize = 200;
 
 pub const DMG_ENEMY_REACHED_GROUND: isize = 15;
 pub const DMG_COLLISION: isize = 50;

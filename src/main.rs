@@ -4,6 +4,7 @@ mod constant;
 mod enemy;
 mod ship;
 mod shot;
+mod goodie;
 
 use std::ops::Add;
 use ruscii::app::{App, Config, State};

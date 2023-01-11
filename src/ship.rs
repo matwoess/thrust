@@ -2,12 +2,22 @@ use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
 use ruscii::terminal::{Color, Style};
 
+pub enum ShipType {
+  Basic, DiagonalShot, StrongShot
+}
+
 pub struct Ship {
     pub pos: Vec2,
     pub shots: Vec<Vec2>,
     pub auto_shoot: bool,
     pub shot_interval: usize,
     pub last_shot_frame: usize,
+}
+
+impl Ship {
+    pub(crate) fn change_ship_type(&self, _new_ship_type: &ShipType) {
+        todo!()
+    }
 }
 
 impl Ship {

@@ -1,8 +1,9 @@
-use std::cmp::{max};
+use std::cmp::{max, min};
 use rand::{Rng, thread_rng};
 use ruscii::spatial::{Vec2};
-use crate::constant::{BORDER_SIZE, DMG_COLLISION, DMG_ENEMY_REACHED_GROUND, DMG_SHOT_HIT, FPS_LIMIT, INITIAL_HEALTH, INITIAL_SPAWN_INTERVAL, MIN_SPAWN_INTERVAL, SPAWN_INTERVAL_DECREASE, SPEEDUP_AFTER_X_FRAMES};
+use crate::constant::{BORDER_SIZE, DMG_COLLISION, DMG_ENEMY_REACHED_GROUND, DMG_SHOT_HIT, FPS_LIMIT, INITIAL_HEALTH, INITIAL_SHIELD, INITIAL_SPAWN_INTERVAL, MAX_HEALTH, MAX_SHIELD, MIN_SPAWN_INTERVAL, SPAWN_INTERVAL_DECREASE, SPEEDUP_AFTER_X_FRAMES};
 use crate::enemy::Enemy;
+use crate::goodie::{Goodie, GoodieType};
 use crate::ship::Ship;
 use crate::shot::Shot;
 
@@ -11,7 +12,9 @@ pub struct GameState {
     pub ship: Ship,
     pub enemies: Vec<Enemy>,
     pub enemy_shots: Vec<Shot>,
+    pub goodies: Vec<Goodie>,
     pub health: isize,
+    pub shield: usize,
     pub score: usize,
     pub last_spawn: usize,
     pub spawn_interval: usize,
@@ -26,7 +29,9 @@ impl GameState {
             ship,
             enemies: Vec::new(),
             enemy_shots: Vec::new(),
+            goodies: Vec::new(),
             health: INITIAL_HEALTH,
+            shield: INITIAL_SHIELD,
             score: 0,
             last_spawn: 0,
             spawn_interval: INITIAL_SPAWN_INTERVAL,
@@ -46,6 +51,7 @@ impl GameState {
         self.ship.update(frame);
         self.update_enemies(frame);
         self.update_enemy_shots();
+        self.update_goodies();
         self.spawn_enemy(frame);
         self.update_ship_shots();
         self.update_game_speed(frame);
@@ -76,6 +82,27 @@ impl GameState {
         });
         self.enemy_shots.iter_mut().for_each(|shot| {
             shot.update();
+        });
+    }
+
+    fn update_goodies(&mut self) {
+        self.goodies.iter_mut().for_each(|goodie| goodie.update());
+        self.goodies.retain(|goodie| {
+            if self.ship.is_hit_by(&goodie.pos) {
+                match &goodie.goodie_type {
+                    GoodieType::RepairKit(additional_health) => {
+                        self.health = max(self.health + *additional_health as isize, MAX_HEALTH as isize);
+                    }
+                    GoodieType::ShieldBoost(additional_shield) => {
+                        self.shield = min(self.shield + additional_shield, MAX_SHIELD);
+                    }
+                    GoodieType::ShipUpgrade(new_ship_type) => {
+                        self.ship.change_ship_type(new_ship_type);
+                    }
+                }
+                return false;
+            }
+            goodie.pos.y < self.dimension.y - BORDER_SIZE
         });
     }
 
