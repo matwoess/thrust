@@ -22,3 +22,9 @@ pub const MIN_SPAWN_INTERVAL: usize = (FPS_LIMIT / 2) as usize;
 
 pub const HUD_HEALTH_GRANULARITY: usize = 5;
 pub const HUD_SHIELD_GRANULARITY: usize = 5;
+
+pub const HEALTH_CHAR: char = '♥';
+pub const SHIELD_CHAR: char = '🛡';
+pub const CHAR_UPGRADE_SHIP_BASIC: char = '^';
+pub const CHAR_UPGRADE_SHIP_DIAGONAL: char = 'Y';
+pub const CHAR_UPGRADE_SHIP_STRONG: char = 'T';
