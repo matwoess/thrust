@@ -5,8 +5,11 @@ use ruscii::spatial::Vec2;
 use ruscii::terminal::{Color, Style};
 use crate::constant::CHAR_SHOT_SHIP;
 
+#[derive(PartialEq)]
 pub enum ShipType {
-  Basic, DiagonalShot, StrongShot
+    Basic,
+    DiagonalShot,
+    StrongShot,
 }
 
 impl Distribution<ShipType> for Standard {
@@ -69,6 +72,7 @@ impl Ship {
         if self.last_shot_frame + self.shot_interval < shot_frame {
             self.shots.push(self.pos);
             self.shots.push(self.pos + Vec2::x(1));
+            self.shots.push(self.pos + Vec2::x(2));
             self.last_shot_frame = shot_frame;
         }
     }
@@ -82,7 +86,7 @@ impl Ship {
 
     pub fn is_hit_by(&self, object: &Vec2) -> bool {
         if object.y == self.pos.y {
-            if object.x == self.pos.x || object.x == self.pos.x + 1 {
+            if self.pos.x <= object.x && object.x <= self.pos.x + 2 {
                 return true;
             }
         }
@@ -91,8 +95,17 @@ impl Ship {
 
     pub fn draw(&self, pencil: &mut Pencil) {
         pencil.set_foreground(Color::Cyan);
-        pencil.draw_char('/', self.pos);
-        pencil.draw_char('\\', self.pos + Vec2::x(1));
+        match self.ship_type {
+            ShipType::Basic => {
+                pencil.draw_text("/^\\", self.pos);
+            }
+            ShipType::DiagonalShot => {
+                pencil.draw_text("YvY", self.pos);
+            }
+            ShipType::StrongShot => {
+                pencil.draw_text("TuT", self.pos);
+            }
+        }
         pencil.set_foreground(Color::Yellow);
         pencil.set_style(Style::Bold);
         for shot in &self.shots {
