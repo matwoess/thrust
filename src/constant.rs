@@ -24,7 +24,7 @@ pub const HUD_HEALTH_GRANULARITY: usize = 5;
 pub const HUD_SHIELD_GRANULARITY: usize = 5;
 
 pub const CHAR_HEALTH: char = '♥';
-pub const CHAR_SHIELD: char = '🛡';
+pub const CHAR_SHIELD: char = 'O';
 pub const CHAR_UPGRADE_SHIP_BASIC: char = '^';
 pub const CHAR_UPGRADE_SHIP_DIAGONAL: char = 'Y';
 pub const CHAR_UPGRADE_SHIP_STRONG: char = 'T';
