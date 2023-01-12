@@ -14,9 +14,9 @@ pub enum GoodieType {
 
 impl Distribution<GoodieType> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> GoodieType {
-        match rng.gen_range(0..=2) {
-            0 => GoodieType::RepairKit(5),
-            1 => GoodieType::ShieldBoost(5),
+        match rng.gen_range(0..=5) {
+            0 | 1 => GoodieType::RepairKit(5),
+            2 | 3 | 4 => GoodieType::ShieldBoost(10),
             _ => GoodieType::ShipUpgrade(rand::random()),
         }
     }
