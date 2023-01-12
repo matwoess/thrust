@@ -74,8 +74,16 @@ fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
 }
 
 fn draw_hud(game_state: &GameState, pencil: &mut Pencil) {
-    pencil.set_foreground(Color::Red);
     let mut pos = Vec2::xy(-2, 0);
+    let digits = &format!("{}", game_state.health);
+    let chars = digits.chars();
+    pos.y -= chars.count() as i32;
+    pencil.set_foreground(Color::White);
+    for ch in digits.chars() {
+        pencil.draw_char(ch, pos);
+        pos.y += 1;
+    }
+    pencil.set_foreground(Color::Red);
     pencil.draw_char(CHAR_HEALTH, pos);
     let curr_health_hud = game_state.health / HUD_HEALTH_GRANULARITY;
     for _ in 0..curr_health_hud {
@@ -83,8 +91,16 @@ fn draw_hud(game_state: &GameState, pencil: &mut Pencil) {
         pencil.draw_char(CHAR_HEALTH_BAR, pos);
     }
 
-    pencil.set_foreground(Color::Yellow);
     let mut pos = Vec2::xy(-4, 0);
+    let digits = &format!("{}", game_state.shield);
+    let chars = digits.chars();
+    pos.y -= chars.count() as i32;
+    pencil.set_foreground(Color::White);
+    for ch in digits.chars() {
+        pencil.draw_char(ch, pos);
+        pos.y += 1;
+    }
+    pencil.set_foreground(Color::Yellow);
     pencil.draw_char(CHAR_SHIELD, pos);
     let curr_shield_hud = game_state.shield / HUD_SHIELD_GRANULARITY;
     for _ in 0..curr_shield_hud {
@@ -92,8 +108,8 @@ fn draw_hud(game_state: &GameState, pencil: &mut Pencil) {
         pencil.draw_char(CHAR_SHIELD_BAR, pos);
     }
     pencil.set_foreground(Color::White);
-    let status_msg = &format!("Health: {} - Shield: {} - Score: {}", game_state.health, game_state.shield, game_state.score);
-    pencil.draw_text(status_msg, Vec2::xy(10, -1));
+    let status_msg = &format!("Score: {}", game_state.score);
+    pencil.draw_text(status_msg, Vec2::xy(25, -1));
 }
 
 fn draw_border(game_state: &GameState, pencil: &mut Pencil) {
