@@ -2,7 +2,7 @@ use rand::{Rng, thread_rng};
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
 use ruscii::terminal::Color;
-use crate::constant::{CHAR_ENEMY, ENEMY_SHOT_PROBABILITY};
+use crate::constant::{CHAR_ENEMY, CHAR_SHOT_ENEMY, ENEMY_SHOT_PROBABILITY};
 use crate::shot::Shot;
 
 pub struct Enemy {
@@ -31,7 +31,7 @@ impl Enemy {
     pub fn shoot(&mut self, shot_frame: usize, shots: &mut Vec<Shot>) {
         if self.last_shot_frame + self.shot_interval < shot_frame {
             if thread_rng().gen_bool(ENEMY_SHOT_PROBABILITY) {
-                shots.push(Shot::new(self.pos));
+                shots.push(Shot::new(self.pos, Vec2::y(1), Color::Red, CHAR_SHOT_ENEMY));
             }
             self.last_shot_frame = shot_frame;
         }

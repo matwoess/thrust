@@ -136,10 +136,10 @@ impl GameState {
         let mut partial_score = 0;
         let enemies = &mut self.enemies;
         self.ship.shots.retain(|shot| {
-            if shot.y == 1 { return false; }
+            if shot.pos.y == 1 { return false; }
             let pre_len = enemies.len();
             enemies.retain(|enemy| {
-                if &enemy.pos == shot {
+                if enemy.pos == shot.pos {
                     partial_score += 5;
                     self.goodies.push(Goodie::new(enemy.pos, rand::random()));
                     return false;

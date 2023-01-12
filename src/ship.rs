@@ -2,8 +2,9 @@ use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
-use ruscii::terminal::{Color, Style};
+use ruscii::terminal::Color;
 use crate::constant::CHAR_SHOT_SHIP;
+use crate::shot::Shot;
 
 #[derive(PartialEq)]
 pub enum ShipType {
@@ -25,7 +26,7 @@ impl Distribution<ShipType> for Standard {
 pub struct Ship {
     pub pos: Vec2,
     pub ship_type: ShipType,
-    pub shots: Vec<Vec2>,
+    pub shots: Vec<Shot>,
     pub auto_shoot: bool,
     pub shot_interval: usize,
     pub last_shot_frame: usize,
@@ -70,9 +71,9 @@ impl Ship {
 
     pub fn shoot(&mut self, shot_frame: usize) {
         if self.last_shot_frame + self.shot_interval < shot_frame {
-            self.shots.push(self.pos);
-            self.shots.push(self.pos + Vec2::x(1));
-            self.shots.push(self.pos + Vec2::x(2));
+            self.shots.push(Shot::new(self.pos, Vec2::y(-1), Color::Yellow, CHAR_SHOT_SHIP));
+            self.shots.push(Shot::new(self.pos + Vec2::x(1), Vec2::y(-1), Color::Yellow, CHAR_SHOT_SHIP));
+            self.shots.push(Shot::new(self.pos + Vec2::x(2), Vec2::y(-1), Color::Yellow, CHAR_SHOT_SHIP));
             self.last_shot_frame = shot_frame;
         }
     }
@@ -81,7 +82,7 @@ impl Ship {
         if self.auto_shoot {
             self.shoot(frame);
         }
-        self.shots.iter_mut().for_each(|shot| shot.y -= 1);
+        self.shots.iter_mut().for_each(|shot| shot.update());
     }
 
     pub fn is_hit_by(&self, object: &Vec2) -> bool {
@@ -106,10 +107,8 @@ impl Ship {
                 pencil.draw_text("TuT", self.pos);
             }
         }
-        pencil.set_foreground(Color::Yellow);
-        pencil.set_style(Style::Bold);
         for shot in &self.shots {
-            pencil.draw_char(CHAR_SHOT_SHIP, *shot);
+            shot.draw(pencil);
         }
     }
 }
