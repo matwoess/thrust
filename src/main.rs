@@ -24,23 +24,29 @@ fn main() {
 
     app.run(|app_state: &mut State, window: &mut Window| {
         handle_user_input(&mut game_state, app_state);
-        game_state.update(app_state.step());
 
         let win_size = window.size();
         let mut pencil = Pencil::new(window.canvas_mut());
 
-        draw_fps(&mut fps_counter, &mut pencil);
-
-        if is_game_over(&mut game_state) {
+        if is_game_over(&game_state) {
             render_game_over_screen(&game_state, win_size, &mut pencil);
             return ();
         }
-        draw_game(&mut game_state, win_size, pencil)
+
+        game_state.update(app_state.step());
+
+        pencil.set_origin((win_size - game_state.dimension) / 2);
+
+        draw_border(&game_state, &mut pencil);
+        draw_hud(&game_state, &mut pencil);
+        draw_game(&game_state, &mut pencil);
+        draw_fps(&mut fps_counter, &mut pencil);
     });
 }
 
 fn draw_fps(fps_counter: &mut FPSCounter, pencil: &mut Pencil) {
     fps_counter.update();
+    pencil.set_foreground(Color::White);
     pencil.draw_text(&format!("FPS: {}", fps_counter.count()), Vec2::xy(1, 0));
 }
 
@@ -54,23 +60,23 @@ fn render_game_over_screen(game_state: &GameState, win_size: Vec2, pencil: &mut 
     pencil.draw_text(msg, Vec2::zero());
 }
 
-fn draw_game(game_state: &GameState, win_size: Vec2, mut pencil: Pencil) {
-    pencil.set_origin((win_size - game_state.dimension) / 2);
-
-    game_state.ship.draw(&mut pencil);
+fn draw_game(game_state: &GameState, pencil: &mut Pencil) {
+    game_state.ship.draw(pencil);
     for shot in &game_state.enemy_shots {
-        shot.draw(&mut pencil);
+        shot.draw(pencil);
     }
     for enemy in &game_state.enemies {
-        enemy.draw(&mut pencil);
+        enemy.draw(pencil);
     }
-
     for goodie in &game_state.goodies {
-        goodie.draw(&mut pencil);
+        goodie.draw(pencil);
     }
+}
 
-    draw_hud(&game_state, &mut pencil);
-    draw_border(game_state, &mut pencil);
+fn draw_border(game_state: &GameState, pencil: &mut Pencil) {
+    pencil.set_foreground(Color::Grey);
+    let border_rect = game_state.dimension.add(Vec2::xy(BORDER_SIZE, BORDER_SIZE));
+    pencil.draw_rect(&RectCharset::simple_round_lines(), Vec2::zero(), border_rect);
 }
 
 fn draw_hud(game_state: &GameState, pencil: &mut Pencil) {
@@ -110,10 +116,4 @@ fn draw_hud(game_state: &GameState, pencil: &mut Pencil) {
     pencil.set_foreground(Color::White);
     let status_msg = &format!("Score: {}", game_state.score);
     pencil.draw_text(status_msg, Vec2::xy(25, -1));
-}
-
-fn draw_border(game_state: &GameState, pencil: &mut Pencil) {
-    pencil.set_foreground(Color::Grey);
-    let border_rect = game_state.dimension.add(Vec2::xy(BORDER_SIZE, BORDER_SIZE));
-    pencil.draw_rect(&RectCharset::simple_round_lines(), Vec2::zero(), border_rect);
 }
