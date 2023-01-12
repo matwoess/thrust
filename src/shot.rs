@@ -1,5 +1,6 @@
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
+use ruscii::terminal::Color;
 use crate::constant::CHAR_SHOT_ENEMY;
 
 pub struct Shot {
@@ -14,6 +15,7 @@ impl Shot {
         self.pos.y += 1;
     }
     pub fn draw(&self, pencil: &mut Pencil) {
+        pencil.set_foreground(Color::Red);
         pencil.draw_char(CHAR_SHOT_ENEMY, self.pos);
     }
 }

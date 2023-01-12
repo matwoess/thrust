@@ -93,6 +93,7 @@ impl Ship {
         pencil.set_foreground(Color::Cyan);
         pencil.draw_char('/', self.pos);
         pencil.draw_char('\\', self.pos + Vec2::x(1));
+        pencil.set_foreground(Color::Yellow);
         pencil.set_style(Style::Bold);
         for shot in &self.shots {
             pencil.draw_char(CHAR_SHOT_SHIP, *shot);
