@@ -3,7 +3,7 @@ use rand::Rng;
 use ruscii::drawing::Pencil;
 use ruscii::spatial::Vec2;
 use ruscii::terminal::Color;
-use crate::constant::CHAR_SHOT_SHIP;
+use crate::constant::{CHAR_SHOT_SHIP_BASIC, CHAR_SHOT_SHIP_DIAGONAL_L, CHAR_SHOT_SHIP_DIAGONAL_R, CHAR_SHOT_SHIP_STRONG};
 use crate::shot::Shot;
 
 pub enum ShipType {
@@ -70,9 +70,31 @@ impl Ship {
 
     pub fn shoot(&mut self, shot_frame: usize) {
         if self.last_shot_frame + self.shot_interval < shot_frame {
-            self.shots.push(Shot::new(self.pos, Vec2::y(-1), Color::Yellow, CHAR_SHOT_SHIP));
-            self.shots.push(Shot::new(self.pos + Vec2::x(1), Vec2::y(-1), Color::Yellow, CHAR_SHOT_SHIP));
-            self.shots.push(Shot::new(self.pos + Vec2::x(2), Vec2::y(-1), Color::Yellow, CHAR_SHOT_SHIP));
+            let shot_color = Color::Yellow;
+            let default_movement = Vec2::y(-1);
+            match self.ship_type {
+                ShipType::Basic => {
+                    let ch = CHAR_SHOT_SHIP_BASIC;
+                    for x in 0..=2 {
+                        self.shots.push(Shot::new(self.pos + Vec2::x(x), default_movement, shot_color, ch));
+                    }
+                }
+                ShipType::StrongShot => {
+                    let ch = CHAR_SHOT_SHIP_STRONG;
+                    for x in 0..=2 {
+                        self.shots.push(Shot::new(self.pos + Vec2::x(x), default_movement, shot_color, ch));
+                    }
+                }
+                ShipType::DiagonalShot => {
+                    let dir_diagonal_l = Vec2::xy(-1, -1);
+                    let dir_diagonal_r = Vec2::xy(1, -1);
+                    self.shots.push(Shot::new(self.pos, dir_diagonal_l, shot_color, CHAR_SHOT_SHIP_DIAGONAL_L));
+                    self.shots.push(Shot::new(self.pos, dir_diagonal_r, shot_color, CHAR_SHOT_SHIP_DIAGONAL_R));
+                    self.shots.push(Shot::new(self.pos + Vec2::x(1), default_movement, shot_color, CHAR_SHOT_SHIP_BASIC));
+                    self.shots.push(Shot::new(self.pos + Vec2::x(2), dir_diagonal_l, shot_color, CHAR_SHOT_SHIP_DIAGONAL_L));
+                    self.shots.push(Shot::new(self.pos + Vec2::x(2), dir_diagonal_r, shot_color, CHAR_SHOT_SHIP_DIAGONAL_R));
+                }
+            }
             self.last_shot_frame = shot_frame;
         }
     }
@@ -100,7 +122,7 @@ impl Ship {
                 pencil.draw_text("/^\\", self.pos);
             }
             ShipType::DiagonalShot => {
-                pencil.draw_text("YvY", self.pos);
+                pencil.draw_text("Y+Y", self.pos);
             }
             ShipType::StrongShot => {
                 pencil.draw_text("TuT", self.pos);

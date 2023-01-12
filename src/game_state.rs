@@ -1,7 +1,7 @@
 use std::cmp::{max, min};
 use rand::{Rng, thread_rng};
 use ruscii::spatial::{Vec2};
-use crate::constant::{BORDER_SIZE, DMG_COLLISION, DMG_ENEMY_REACHED_GROUND, DMG_SHOT_HIT, FPS_LIMIT, INITIAL_HEALTH, INITIAL_SHIELD, INITIAL_SPAWN_INTERVAL, MAX_HEALTH, MAX_SHIELD, MIN_SPAWN_INTERVAL, SPAWN_INTERVAL_DECREASE, SPEEDUP_AFTER_X_FRAMES};
+use crate::constant::{BORDER_SIZE, CHAR_SHOT_SHIP_STRONG, DMG_COLLISION, DMG_ENEMY_REACHED_GROUND, DMG_SHOT_HIT, FPS_LIMIT, INITIAL_HEALTH, INITIAL_SHIELD, INITIAL_SPAWN_INTERVAL, MAX_HEALTH, MAX_SHIELD, MIN_SPAWN_INTERVAL, SPAWN_INTERVAL_DECREASE, SPEEDUP_AFTER_X_FRAMES};
 use crate::enemy::Enemy;
 use crate::goodie::{Goodie, GoodieType};
 use crate::ship::Ship;
@@ -137,6 +137,7 @@ impl GameState {
         let enemies = &mut self.enemies;
         self.ship.shots.retain(|shot| {
             if shot.pos.y == 0 { return false; }
+            if shot.pos.x == 0 || shot.pos.x == self.dimension.x { return false; }
             let pre_len = enemies.len();
             enemies.retain(|enemy| {
                 if enemy.pos == shot.pos {
@@ -147,7 +148,7 @@ impl GameState {
                 true
             });
             let destroyed = enemies.len() != pre_len;
-            !destroyed
+            !destroyed || shot.character == CHAR_SHOT_SHIP_STRONG
         });
         self.score += partial_score;
     }
