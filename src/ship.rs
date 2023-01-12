@@ -6,7 +6,6 @@ use ruscii::terminal::Color;
 use crate::constant::CHAR_SHOT_SHIP;
 use crate::shot::Shot;
 
-#[derive(PartialEq)]
 pub enum ShipType {
     Basic,
     DiagonalShot,
@@ -63,7 +62,7 @@ impl Ship {
     }
     pub fn move_y(&mut self, dy: i32, max_y: i32) {
         let new_y = self.pos.y + dy;
-        if new_y <= 0 || new_y >= max_y {
+        if new_y <= 1 || new_y >= max_y {
             return;
         }
         self.pos.y = new_y;

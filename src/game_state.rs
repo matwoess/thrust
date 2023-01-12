@@ -40,7 +40,7 @@ impl GameState {
     }
 
     pub fn move_ship_x(&mut self, dx: i32) {
-        self.ship.move_x(dx, self.dimension.x);
+        self.ship.move_x(dx, self.dimension.x - 2);
     }
 
     pub fn move_ship_y(&mut self, dy: i32) {
@@ -136,7 +136,7 @@ impl GameState {
         let mut partial_score = 0;
         let enemies = &mut self.enemies;
         self.ship.shots.retain(|shot| {
-            if shot.pos.y == 1 { return false; }
+            if shot.pos.y == 0 { return false; }
             let pre_len = enemies.len();
             enemies.retain(|enemy| {
                 if enemy.pos == shot.pos {
