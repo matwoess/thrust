@@ -59,30 +59,42 @@ impl GameState {
 
     fn update_enemies(&mut self, frame: usize) {
         self.enemies.iter_mut().for_each(|enemy| enemy.update(frame, &mut self.enemy_shots));
+        let mut standard_damage = 0;
+        let mut direct_damage = 0;
         self.enemies.retain(|enemy| {
             if self.ship.is_hit_by(&enemy.pos) {
-                self.health = if self.health <= DMG_COLLISION { 0 } else { self.health - DMG_COLLISION };
+                standard_damage += DMG_COLLISION;
                 return false;
             }
             if enemy.pos.y > self.dimension.y - BORDER_SIZE {
-                self.health = if self.health <= DMG_ENEMY_REACHED_GROUND { 0 } else { self.health - DMG_ENEMY_REACHED_GROUND };
+                direct_damage += DMG_ENEMY_REACHED_GROUND;
                 return false;
             }
             true
         });
+        self.damage_ship(standard_damage, direct_damage);
+    }
+
+    fn damage_ship(&mut self, damage: usize, direct_damage: usize) {
+        self.health = if self.health <= direct_damage { 0 } else { self.health - direct_damage };
+        if self.shield > 0 {
+            self.shield = if self.shield <= damage { 0 } else { self.shield - damage };
+        } else {
+            self.health = if self.health <= damage { 0 } else { self.health - damage };
+        }
     }
 
     fn update_enemy_shots(&mut self) {
+        let mut standard_damage = 0;
+        self.enemy_shots.iter_mut().for_each(|shot| { shot.update(); });
         self.enemy_shots.retain(|shot| {
             if self.ship.is_hit_by(&shot.pos) {
-                self.health = if self.health <= DMG_SHOT_HIT { 0 } else { self.health - DMG_SHOT_HIT };
+                standard_damage += DMG_SHOT_HIT;
                 return false;
             }
             shot.pos.y < self.dimension.y - BORDER_SIZE
         });
-        self.enemy_shots.iter_mut().for_each(|shot| {
-            shot.update();
-        });
+        self.damage_ship(standard_damage, 0);
     }
 
     fn update_goodies(&mut self) {
