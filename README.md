@@ -7,7 +7,7 @@ The game is entirely written in the Rust programming language and uses the
 the basic event loop and colored drawing.
 
 rustcii is a multi-platform crate, so the game should run on Linux, macOS and Windows.  
-Note, that for parsing user input on Linux the X11 Server is (unfortunately) **required**.  
+Note, that for parsing user input on Linux, the X11 Server is (unfortunately) **required**.  
 
 
 ## Game description
@@ -18,7 +18,7 @@ As the enemies move downwards, you should attempt to destroy as many as you can.
 Once an enemy escapes (by reaching the ground) this will damage the player's health.  
 Every destroyed enemy drops a random goodie that can be picked up by touching it.  
 The game keeps track of how many enemies were destroyed by the player and accumulates a total score.  
-The game is over once the player's health reaches 0.
+The game is over, once the player's health reaches 0.
 
 ## Controls
 
@@ -32,13 +32,15 @@ The game is capped at 20 frames per second.
 The field size is 60 characters in x-direction and 32 in y-direction.  
 Due to characters in a terminal generally being twice as high as wide, 
 the player moves two times as fast in the horizontal direction than the vertical one.
-This can lead to problems catching enemies with width 1 and skipping elements.  
+This can lead to problems shooting enemies with width 1 and can cause involuntary skipping elements.  
 As following the ship is 3 characters long and fires 3 shots at once each time. This makes it easier to catch goodies
 and hit enemies.  
 
 ### HUD
 On the left of the game field the health and shield bar are drawn.  
 At the top of the field the current score is displayed.  
+A border is drawn around the game field, to make it clear where enemies appear/disappear and shots disintegrate.  
+Embedded in the border the current FPS counter is displayed.
 
 ### Goodies
 
@@ -52,7 +54,7 @@ A goodie is one out of three types:
 
 By picking up a ship upgrade, the type of weapon changes.
 There are by now 3 different ones:
- - `^` ->  `/^\ ` -> shoots 3 straight usual `|` shots. These disappear once they hit something
+ - `^` ->  `/^\ ` -> shoots 3 straight usual `|` shots; These disappear once they hit something
  - `Y` -> `Y+Y` -> shoots 4 diagonal shots and one usual straight shot
  - `T` -> `TuT` -> shoots 3 powerful `█` shots which destroy and go through enemies
 
@@ -62,27 +64,27 @@ Different types of events hurt the ship and its shield in different magnitude.
 
  - hit by enemy shot -- 5 damage to shield or health
  - collision with enemy -- 50 damage to shield or health
- - enemy escapes (ground) - 15 direct damage to health, goes through shield
+ - enemy escapes (ground) - 15 direct damage to health, **bypasses** the shield
 
 Even if the shield is on minimum (5), it will block the full collision damage.
-When having 5 shield, you can hit an enemy to quickly destroying it instead of receiving 15 direct dmg.
+When having 5 shield, you can hit an enemy to quickly destroying it instead of receiving 15 direct damage.
 
 ## Dependencies
 
- - [ruscii](https://github.com/lemunozm/ruscii) (and sub-dependencies) for input handling, the event loop and rendering the game
+ - [ruscii](https://github.com/lemunozm/ruscii) (and sub-dependencies) for input handling, the event loop, and rendering the game
  - [rand](https://docs.rs/rand/latest/rand/) to choose random goodies and new enemies' horizontal spawn positions
 
 ## Usage
 
 To compile the game, the rust package manager and compiler `cargo` is required.  
-You can clone this repo and execute:
+To run the game, you can clone this repository and execute:
 
 ```shell
 cargo run
 ```
 
 Debugging is complicated, because `stdout` is used to display the interface.  
-It is however possible to log messages to `stderr` using `eprintln!` and run 
+It is, however, possible to log messages to `stderr` using `eprintln!` and run 
 the app while redirecting the error stream to a file ([instructions from](https://github.com/lemunozm/ruscii#debugging)):
 
 ```shell
@@ -102,14 +104,14 @@ All development and testing was done under Arch Linux (Kernel 6.1.4-arch1-1) wit
 - ruscii = "0.3.2"
 - rand = "0.8.5"
 
-For minimum input lag, when rendering many elements, and best performance the
+For minimum input lag when rendering many elements and best performance the
 [alacritty](https://github.com/alacritty/alacritty) terminal emulator was used for running the application.
 
 ## Effort and research
 
 A lot of effort went into researching and trying out different terminal/console game engines.
 Due to personal recommendations, I wanted to avoid the complexity and learning curve of the 
-[ncurses](https://github.com/mirror/ncurses) library (this is probably the best framework for such task out there).
+[ncurses](https://github.com/mirror/ncurses) library (this is probably the best library for creating terminal based UIs out there).
 
 One of the first Google search results when searching for "terminal game engine" are 
  - [Termgine](https://github.com/Morasiu/Termgine) and
@@ -127,7 +129,7 @@ When I was finally starting implementation, I've realized that this engine does 
 Thus moving in two directons at once (diagonally) would be practically impossible. 
 Also, it was a bit laggy.  
 
-I've then investigated some other libraries that would support these traits, like 
+I've then investigated some other libraries that would support these traits, like:
  - [doryen-rs](https://github.com/jice-nospam/doryen-rs).
 
 It seemed promising, but complex. Especially the WASM support catched my eye.  
@@ -136,7 +138,7 @@ There seemed to be many frameworks in Rust, so I've compared some of them.
 
 Finally, I've decided to use [ruscii](https://github.com/lemunozm/ruscii) as a base framework.  
 It had key-down/key-up events, while being simple enough to understand.  
-Furthermore there was a simple demo application that corresponded to a simple version of what I planned to create.
+Furthermore there was a demo application that corresponded to a simple version of what I planned to create.
 
 So I've (re-)learned myself the Rust programming language.  
 
@@ -145,7 +147,7 @@ After all this research, I spent about another 30 hours of development time in m
 
 ## Demos and screenshots
 
-The following 3 screenshots shows how a gameplay moment might look with the tree different ship types.
+The following 3 screenshots shows how a gameplay moment might look like with the three different ship types.
 
 - default shot type (3 straight frontal ones), 50 health, 20 shield, 50 score
 
@@ -155,7 +157,7 @@ The following 3 screenshots shows how a gameplay moment might look with the tree
 
 ![with spread shot ship](demo/spread_shot.png)
 
-- strong shot (3 strong straight surviving shots), 55 health, 50 shield, 115 score, shield goodie
+- strong shot (3 strong, straight, surviving shots), 55 health, 50 shield, 115 score, shield goodie
 
 ![with strong shot ship](demo/strong_shot.png)
 
@@ -171,11 +173,11 @@ Many more hours can be put into the game to better optimize it and make it more 
 
 Ideas for the game:
  - more goodies: like rapid shot 
- - different ship sizes and coloring
- - stronger (and bigger) enemies that require more than one hit (and change color according to health)
+ - different ship sizes and coloring art
+ - stronger (and bigger) enemies, that require more than one hit (and change color according to health)
  - bosses
- - fixed levels and progress
- - saving the local high-score to a file and display best
+ - pre-defined levels and progress
+ - saving the local high-score to a file and display/update the current best
  - enter name
  - loading screen with tutorial/instructions
  - super weapon (goodie?) like bomb that clears (parts of the) screen damaging all enemies
